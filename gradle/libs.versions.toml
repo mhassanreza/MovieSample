@@ -1,0 +1,128 @@
+[versions]
+accompanistPermissions = "0.31.1-alpha"
+agp = "8.4.2"
+checkerQual = "3.41.0"
+kotlin = "2.0.20"
+coreKtx = "1.13.1"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+lifecycleRuntimeKtx = "2.8.6"
+activityCompose = "1.9.3"
+composeBom = "2024.10.00"
+coilVersion = "2.6.0"
+hiltVersion = "2.52"
+hiltNavigationVersion = "1.2.0"
+kspVersion = "2.0.20-1.0.25"
+appcompat = "1.7.0"
+material = "1.12.0"
+activity = "1.9.3"
+mediarouter = "1.7.0"
+navVersion = "2.8.3"
+serialization = "1.7.1"
+datastore = "1.1.1"
+coroutine = "1.8.0"
+composeVersion = "1.7.4"
+retrofitVersion = "2.9.0"
+okHttp3LoggingVersion = "5.0.0-alpha.2"
+junitKtx = "1.2.1"
+# SPLASH SCREEN
+coreSplashscreen = "1.0.1"
+# GOOGLE FONTS :->
+uiTextGoogleFonts = "1.7.4"
+# EXTENDED MATERIAL ICONS :->
+materialIconsExtended = "1.7.4"
+foundationAndroid = "1.7.4"
+uiGraphicsAndroid = "1.7.4"
+# expo player
+exo_player_version = "1.4.1"
+android_work_version = "2.9.1"
+android_annotation_version = "1.9.0"
+cronetApi = "119.6045.31"
+media3DatasourceCronet = "1.4.1"
+## this is override version replaced for default version number
+#compose-compiler = "1.5.15"
+
+
+
+[libraries]
+#// Android Ktx
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-mediarouter = { module = "androidx.mediarouter:mediarouter", version.ref = "mediarouter" }
+checker-qual = { module = "org.checkerframework:checker-qual", version.ref = "checkerQual" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+
+#// Appcompat Activity
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+
+#// Jetpack Compose activity
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+#// Jetpack Compose
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+
+#// Jetpack Compose Navigation Support
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navVersion" }
+#lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
+
+##// Material
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+#// Material3
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+#// Coil Image Loading
+coil-image-loading = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilVersion" }
+#// Retrofit - A type-safe HTTP client for Android and Java
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
+#// A Retrofit Converter which uses Gson for serialization
+retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofitVersion" }
+#// Square’s great HTTP client for the JVM, Android, and GraalVM.
+okhttp3-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okHttp3LoggingVersion" }
+
+#// Hilt DI
+androidx-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltVersion" }
+androidx-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltVersion" }
+androidx-hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationVersion" }
+##// EXTENDED MATERIAL ICONS :->
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+#// SPLASH SCREEN
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+#// GOOGLE FONTS :->
+androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+#// Datastore
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+#// kotlinx Serialization
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+#// Kotlinx Coroutine
+kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutine" }
+#// compose runtime
+compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "composeVersion" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
+androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroid" }
+#// exo player
+media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "exo_player_version" }
+media3-ui = { module = "androidx.media3:media3-ui", version.ref = "exo_player_version" }
+media3-exoplayer-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "exo_player_version" }
+media3-datasource = { group = "androidx.media3", name = "media3-datasource-cronet", version.ref = "exo_player_version" }
+androidx-work = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "android_work_version" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "android_annotation_version" }
+
+cronet-api = { group = "org.chromium.net", name = "cronet-api", version.ref = "cronetApi" }
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+android-ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
