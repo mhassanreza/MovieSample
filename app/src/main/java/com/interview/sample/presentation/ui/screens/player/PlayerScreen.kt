@@ -25,12 +25,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import com.interview.common.utils.CenteredLoadingProgress
 import com.interview.sample.presentation.ui.screens.movie_detail.MovieDetailAppBar
+import com.interview.sample.presentation.ui.screens.player.intent.PlayerScreenIntent
 import com.interview.sample.presentation.ui.screens.player.viewmodel.PlayerScreenViewModel
 
 @OptIn(UnstableApi::class)
@@ -41,9 +40,9 @@ fun PlayerScreen(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
     viewModel: PlayerScreenViewModel = hiltViewModel()
 ) {
-    var isBuffering by remember { mutableStateOf(false) }
-    var isError by remember { mutableStateOf<String?>(null) }
-
+    val playerScreenViewState by remember {
+        viewModel.playerScreenViewState
+    }
     // Get the current orientation (portrait or landscape)
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -62,33 +61,19 @@ fun PlayerScreen(
         }
     }
     LaunchedEffect(Unit) {
-        viewModel.player.playWhenReady = true  // Start playing the preloaded content
+        viewModel.handleIntent(PlayerScreenIntent.SetAutoPlayOnPrepare(true))
     }
     // Listen for player state changes and errors
     DisposableEffect(Unit) {
-        val listener = object : Player.Listener {
-            override fun onPlaybackStateChanged(state: Int) {
-                isBuffering = state == Player.STATE_BUFFERING
-            }
-
-            override fun onPlayerError(error: PlaybackException) {
-                isError =
-                    if (error.errorCode == PlaybackException.ERROR_CODE_DRM_PROVISIONING_FAILED || error.errorCode == PlaybackException.ERROR_CODE_DRM_LICENSE_ACQUISITION_FAILED) {
-                        "DRM Error: ${error.message}"
-                    } else {
-                        error.message
-                    }
-            }
+        val observer = LifecycleEventObserver { _, event ->
+            lifecycleEvent = event
         }
-
-        viewModel.player.addListener(listener)
-
+        lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
-            viewModel.player.playWhenReady = false
-            viewModel.player.removeListener(listener)
-            viewModel.player.stop()
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
+
     Scaffold(topBar = {
         if (!isLandscape) {
             MovieDetailAppBar(title = "Video Player", onBackClick = onBackClick)
@@ -110,13 +95,11 @@ fun PlayerScreen(
                 }, update = {
                     when (lifecycleEvent) {
                         Lifecycle.Event.ON_STOP -> {
-                            it.onPause()
-                            it.player?.pause()
+                            viewModel.handleIntent(PlayerScreenIntent.PauseVideo)
                         }
 
                         Lifecycle.Event.ON_RESUME -> {
-                            it.onResume()
-                            it.player?.play()
+                            viewModel.handleIntent(PlayerScreenIntent.PlayVideo)
                         }
 
                         else -> Unit
@@ -124,11 +107,11 @@ fun PlayerScreen(
                 }, modifier = Modifier.fillMaxSize()
                 )
 
-                if (isBuffering) {
+                if (playerScreenViewState.isBuffering) {
                     CenteredLoadingProgress()
                 }
 
-                isError?.let { errorMessage ->
+                playerScreenViewState.isError?.let { errorMessage ->
                     Text(
                         text = "Error: $errorMessage",
                         color = Color.Red,

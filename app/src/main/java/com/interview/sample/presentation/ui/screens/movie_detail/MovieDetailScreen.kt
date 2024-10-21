@@ -27,7 +27,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,8 +42,8 @@ import com.interview.sample.presentation.ui.components.movie_detail.GenreSection
 import com.interview.sample.presentation.ui.components.movie_detail.MovieBannerSection
 import com.interview.sample.presentation.ui.components.movie_detail.MovieDetailInfoSection
 import com.interview.sample.presentation.ui.components.movie_detail.MovieRatingSection
+import com.interview.sample.presentation.ui.screens.movie_detail.intent.MovieDetailIntent
 import com.interview.sample.presentation.ui.screens.movie_detail.viewmodel.MovieDetailViewModel
-
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
@@ -62,10 +61,10 @@ fun MovieDetailScreen(
     val notificationPermissionState = rememberPermissionState(
         android.Manifest.permission.POST_NOTIFICATIONS
     )
-    val isDownloaded = remember {
-        viewModel.isDownloaded.value
+
+    val movieDetailViewState by remember {
+        viewModel.movieDetailViewState
     }
-    val isConnected by viewModel.isConnected.collectAsState(initial = true)
 
     Scaffold(topBar = {
         MovieDetailAppBar(title = title ?: "Random Movie Title", onBackClick = onBackClick)
@@ -77,10 +76,10 @@ fun MovieDetailScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             MovieBannerSection(bannerUrl ?: "", onPlayClicked = {
-                if (isConnected) {
+                if (movieDetailViewState.isConnected) {
                     onPlayClicked.invoke()
                 } else {
-                    if (isDownloaded) {
+                    if (movieDetailViewState.isDownloaded) {
                         onPlayClicked.invoke()
                     }
                 }
@@ -96,8 +95,8 @@ fun MovieDetailScreen(
             ) {
                 MovieRatingSection(rating = "8.5/10") // You can replace it with a real rating
                 Spacer(modifier = Modifier.weight(1f))
-                if (isConnected) {
-                    if (isDownloaded) {
+                if (movieDetailViewState.isConnected) {
+                    if (movieDetailViewState.isDownloaded) {
                         OutlinedButton(onClick = { /*TODO*/ }) {
                             Icon(
                                 imageVector = Icons.Default.DownloadDone,
@@ -108,7 +107,11 @@ fun MovieDetailScreen(
                     } else {
                         Button(onClick = {
                             if (notificationPermissionState.status.isGranted) {
-                                viewModel.downloadVideo(supportFragmentManager = activity.supportFragmentManager)
+                                viewModel.handleIntent(
+                                    MovieDetailIntent.DownloadClicked(
+                                        supportFragmentManager = activity.supportFragmentManager
+                                    )
+                                )
                             } else {
                                 notificationPermissionState.launchPermissionRequest()
                             }
@@ -123,7 +126,7 @@ fun MovieDetailScreen(
                 } else {
                     Column {
                         Text(text = "No Internet")
-                        if (isDownloaded) {
+                        if (movieDetailViewState.isDownloaded) {
                             OutlinedButton(onClick = { /*TODO*/ }) {
                                 Icon(
                                     imageVector = Icons.Default.DownloadDone,
