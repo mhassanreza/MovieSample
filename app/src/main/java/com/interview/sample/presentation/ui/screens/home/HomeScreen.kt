@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.interview.common.utils.CenteredLoadingProgress
 import com.interview.common.utils.LoadingDialog
@@ -133,11 +134,16 @@ fun MovieItemCard(
             modifier = modifier
         ) {
             val timestamp = System.currentTimeMillis()
-            val imageUrl = item!!.thumbnail + "?t=$timestamp"
+            val imageUrlWithTimeStamp = item!!.thumbnail + "?t=$timestamp"
+            val imageUrl = item.thumbnail
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageUrl).crossfade(true)
-                    .dispatcher(Dispatchers.IO).build(),
+                    .data(imageUrl)
+                    .crossfade(true)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .networkCachePolicy(CachePolicy.READ_ONLY)
+                    .dispatcher(Dispatchers.IO)
+                    .build(),
                 contentDescription = "",
                 contentScale = ContentScale.FillBounds,
                 loading = {

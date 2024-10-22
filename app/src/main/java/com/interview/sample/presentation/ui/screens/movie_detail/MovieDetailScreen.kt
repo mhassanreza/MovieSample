@@ -27,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -61,6 +62,12 @@ fun MovieDetailScreen(
     val notificationPermissionState = rememberPermissionState(
         android.Manifest.permission.POST_NOTIFICATIONS
     )
+
+    LaunchedEffect(Unit) {
+        if (!notificationPermissionState.status.isGranted) {
+            notificationPermissionState.launchPermissionRequest()
+        }
+    }
 
     val movieDetailViewState by remember {
         viewModel.movieDetailViewState
@@ -106,15 +113,11 @@ fun MovieDetailScreen(
                         }
                     } else {
                         Button(onClick = {
-                            if (notificationPermissionState.status.isGranted) {
-                                viewModel.handleIntent(
-                                    MovieDetailIntent.DownloadClicked(
-                                        supportFragmentManager = activity.supportFragmentManager
-                                    )
+                            viewModel.handleIntent(
+                                MovieDetailIntent.DownloadClicked(
+                                    supportFragmentManager = activity.supportFragmentManager
                                 )
-                            } else {
-                                notificationPermissionState.launchPermissionRequest()
-                            }
+                            )
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Download,
