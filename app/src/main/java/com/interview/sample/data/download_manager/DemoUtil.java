@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.interview.sample.download_manager;
+package com.interview.sample.data.download_manager;
 
 import android.content.Context;
 

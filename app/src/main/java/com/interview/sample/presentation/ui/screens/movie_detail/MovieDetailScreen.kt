@@ -1,5 +1,9 @@
 package com.interview.sample.presentation.ui.screens.movie_detail
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -35,10 +40,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media3.common.util.UnstableApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.interview.common.utils.Constants
 import com.interview.sample.presentation.ui.components.movie_detail.GenreSection
 import com.interview.sample.presentation.ui.components.movie_detail.MovieBannerSection
 import com.interview.sample.presentation.ui.components.movie_detail.MovieDetailInfoSection
@@ -58,6 +65,8 @@ fun MovieDetailScreen(
     viewModel: MovieDetailViewModel = hiltViewModel()
 ) {
     val activity = LocalContext.current as? AppCompatActivity ?: return
+    val context = LocalContext.current
+
     // notification permission state
     val notificationPermissionState = rememberPermissionState(
         android.Manifest.permission.POST_NOTIFICATIONS
@@ -66,6 +75,24 @@ fun MovieDetailScreen(
     LaunchedEffect(Unit) {
         if (!notificationPermissionState.status.isGranted) {
             notificationPermissionState.launchPermissionRequest()
+        }
+    }
+
+    // Register the BroadcastReceiver inside DisposableEffect
+    DisposableEffect(Unit) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                viewModel.handleIntent(MovieDetailIntent.DownloadStatusUpdated)
+            }
+        }
+        // Register the BroadcastReceiver
+        LocalBroadcastManager.getInstance(context).registerReceiver(
+            receiver,
+            IntentFilter(Constants.RECEIVER_ACTION)
+        )
+        // Unregister the BroadcastReceiver when the Composable is disposed
+        onDispose {
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver)
         }
     }
 

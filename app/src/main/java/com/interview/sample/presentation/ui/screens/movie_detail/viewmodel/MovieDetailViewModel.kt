@@ -17,8 +17,8 @@ import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.offline.DownloadHelper
 import com.interview.network.helper.ConnectivityObserver
-import com.interview.sample.download_manager.DemoUtil
-import com.interview.sample.download_manager.DownloadTracker
+import com.interview.sample.data.download_manager.DemoUtil
+import com.interview.sample.data.download_manager.DownloadTracker
 import com.interview.sample.presentation.ui.screens.movie_detail.intent.MovieDetailIntent
 import com.interview.sample.presentation.ui.screens.movie_detail.state.MovieDetailState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -83,6 +83,10 @@ class MovieDetailViewModel @OptIn(UnstableApi::class) @Inject constructor(
         when (intent) {
             is MovieDetailIntent.DownloadClicked -> {
                 downloadVideo(supportFragmentManager = intent.supportFragmentManager)
+            }
+
+            is MovieDetailIntent.DownloadStatusUpdated -> {
+                checkIfDownloadedAndPreparePlayer()
             }
         }
     }

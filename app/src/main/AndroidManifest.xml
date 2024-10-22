@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".download_manager.service.OfflineVideoDownloadService"
+            android:name=".data.download_manager.service.OfflineVideoDownloadService"
             android:exported="false"
             android:foregroundServiceType="dataSync">
             <intent-filter>

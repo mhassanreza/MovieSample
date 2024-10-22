@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.interview.sample.download_manager.service;
+package com.interview.sample.data.download_manager.service;
 
-import static com.interview.sample.download_manager.DemoUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID;
+import static com.interview.sample.data.download_manager.DemoUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID;
 
 import android.app.Notification;
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.media3.common.util.NotificationUtil;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.common.util.Util;
@@ -31,8 +33,9 @@ import androidx.media3.exoplayer.offline.DownloadService;
 import androidx.media3.exoplayer.scheduler.PlatformScheduler;
 import androidx.media3.exoplayer.scheduler.Scheduler;
 
+import com.interview.common.utils.Constants;
 import com.interview.sample.R;
-import com.interview.sample.download_manager.DemoUtil;
+import com.interview.sample.data.download_manager.DemoUtil;
 
 import java.util.List;
 
@@ -47,11 +50,7 @@ public class OfflineVideoDownloadService extends DownloadService {
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
 
     public OfflineVideoDownloadService() {
-        super(
-                FOREGROUND_NOTIFICATION_ID,
-                DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL,
-                DOWNLOAD_NOTIFICATION_CHANNEL_ID,
-                androidx.media3.exoplayer.R.string.exo_download_notification_channel_name,
+        super(FOREGROUND_NOTIFICATION_ID, DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL, DOWNLOAD_NOTIFICATION_CHANNEL_ID, androidx.media3.exoplayer.R.string.exo_download_notification_channel_name,
                 /* channelDescriptionResourceId= */ 0);
     }
 
@@ -60,11 +59,8 @@ public class OfflineVideoDownloadService extends DownloadService {
         // This will only happen once, because getDownloadManager is guaranteed to be called only once
         // in the life cycle of the process.
         DownloadManager downloadManager = DemoUtil.getDownloadManager(/* context= */ this);
-        DownloadNotificationHelper downloadNotificationHelper =
-                DemoUtil.getDownloadNotificationHelper(/* context= */ this);
-        downloadManager.addListener(
-                new TerminalStateNotificationHelper(
-                        this, downloadNotificationHelper, FOREGROUND_NOTIFICATION_ID + 1));
+        DownloadNotificationHelper downloadNotificationHelper = DemoUtil.getDownloadNotificationHelper(/* context= */ this);
+        downloadManager.addListener(new TerminalStateNotificationHelper(this, downloadNotificationHelper, FOREGROUND_NOTIFICATION_ID + 1));
         return downloadManager;
     }
 
@@ -75,15 +71,9 @@ public class OfflineVideoDownloadService extends DownloadService {
 
     @Override
     protected Notification getForegroundNotification(List<Download> downloads, int notMetRequirements) {
-        return DemoUtil.getDownloadNotificationHelper(this)
-                .buildProgressNotification(
-                        this,
-                        R.mipmap.ic_launcher,
-                        /* contentIntent= */ null,
-                        /* message= */ null,
-                        downloads,
-                        notMetRequirements
-                );
+        return DemoUtil.getDownloadNotificationHelper(this).buildProgressNotification(this, R.mipmap.ic_launcher,
+                /* contentIntent= */ null,
+                /* message= */ null, downloads, notMetRequirements);
     }
 
 
@@ -100,8 +90,7 @@ public class OfflineVideoDownloadService extends DownloadService {
 
         private int nextNotificationId;
 
-        public TerminalStateNotificationHelper(
-                Context context, DownloadNotificationHelper notificationHelper, int firstNotificationId) {
+        public TerminalStateNotificationHelper(Context context, DownloadNotificationHelper notificationHelper, int firstNotificationId) {
             this.context = context.getApplicationContext();
             this.notificationHelper = notificationHelper;
             nextNotificationId = firstNotificationId;
@@ -112,19 +101,16 @@ public class OfflineVideoDownloadService extends DownloadService {
             DownloadManager.Listener.super.onDownloadChanged(downloadManager, download, finalException);
             Notification notification;
             if (download.state == Download.STATE_COMPLETED) {
-                notification =
-                        notificationHelper.buildDownloadCompletedNotification(
-                                context,
-                                androidx.media3.ui.R.drawable.exo_ic_check,
-                                /* contentIntent= */ null,
-                                Util.fromUtf8Bytes(download.request.data));
+                // Send broadcast for download completion
+                Intent intent = new Intent(Constants.RECEIVER_ACTION);
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                // Send notification
+                notification = notificationHelper.buildDownloadCompletedNotification(context, androidx.media3.ui.R.drawable.exo_ic_check,
+                        /* contentIntent= */ null, Util.fromUtf8Bytes(download.request.data));
+
             } else if (download.state == Download.STATE_FAILED) {
-                notification =
-                        notificationHelper.buildDownloadFailedNotification(
-                                context,
-                                androidx.media3.ui.R.drawable.exo_icon_stop,
-                                /* contentIntent= */ null,
-                                Util.fromUtf8Bytes(download.request.data));
+                notification = notificationHelper.buildDownloadFailedNotification(context, androidx.media3.ui.R.drawable.exo_icon_stop,
+                        /* contentIntent= */ null, Util.fromUtf8Bytes(download.request.data));
             } else {
                 return;
             }

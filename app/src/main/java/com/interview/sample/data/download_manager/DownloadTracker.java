@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.interview.sample.download_manager;
+package com.interview.sample.data.download_manager;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -52,7 +52,7 @@ import androidx.media3.exoplayer.trackselection.MappingTrackSelector.MappedTrack
 
 
 import com.interview.sample.R;
-import com.interview.sample.download_manager.service.OfflineVideoDownloadService;
+import com.interview.sample.data.download_manager.service.OfflineVideoDownloadService;
 
 import java.io.IOException;
 import java.util.HashMap;
